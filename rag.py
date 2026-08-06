@@ -7,14 +7,14 @@ from config import GEMINI_API_KEY
 def get_embedding(text: str) -> list[float]:
     """
     Generates embedding vector for a given text using Google Gemini API.
-    Tries text-embedding-004 first, with fallback to gemini-embedding-2.
+    Uses gemini-embedding-2 (verified HTTP 200).
     """
     if not GEMINI_API_KEY:
         raise ValueError("GEMINI_API_KEY is missing. Please set it in Secrets or .env file.")
 
     models_to_try = [
-        "text-embedding-004",
-        "gemini-embedding-2"
+        "gemini-embedding-2",
+        "text-embedding-004"
     ]
 
     last_error = None
@@ -60,15 +60,14 @@ def embed_chunks(chunks: list[str], progress_callback=None) -> list[dict]:
 
 def chat_completion(prompt: str, system_instruction: str = None) -> str:
     """
-    Calls Gemini Chat Completion model with fast and reliable models.
+    Calls Gemini Chat Completion model using verified working endpoint (gemini-flash-latest).
     """
     if not GEMINI_API_KEY:
         raise ValueError("GEMINI_API_KEY is missing. Please set it in Secrets or .env file.")
 
     models_to_try = [
-        "gemini-1.5-flash",
-        "gemini-2.0-flash",
-        "gemini-1.5-pro"
+        "gemini-flash-latest",
+        "gemini-2.0-flash"
     ]
 
     last_error = None
