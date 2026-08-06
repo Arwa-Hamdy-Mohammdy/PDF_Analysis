@@ -10,7 +10,7 @@ def get_embedding(text: str) -> list[float]:
     Tries text-embedding-004 first, with fallback to gemini-embedding-2.
     """
     if not GEMINI_API_KEY:
-        raise ValueError("GEMINI_API_KEY is missing. Please check your .env file.")
+        raise ValueError("GEMINI_API_KEY is missing. Please set it in Secrets or .env file.")
 
     models_to_try = [
         "text-embedding-004",
@@ -26,7 +26,7 @@ def get_embedding(text: str) -> list[float]:
             }
         }
         try:
-            response = requests.post(url, json=body, timeout=15)
+            response = requests.post(url, json=body, timeout=30)
             if response.status_code == 200:
                 data = response.json()
                 return data["embedding"]["values"]
@@ -60,15 +60,15 @@ def embed_chunks(chunks: list[str], progress_callback=None) -> list[dict]:
 
 def chat_completion(prompt: str, system_instruction: str = None) -> str:
     """
-    Calls Gemini Chat Completion model (gemini-2.5-flash with fallbacks).
+    Calls Gemini Chat Completion model with fast and reliable models.
     """
     if not GEMINI_API_KEY:
-        raise ValueError("GEMINI_API_KEY is missing. Please check your .env file.")
+        raise ValueError("GEMINI_API_KEY is missing. Please set it in Secrets or .env file.")
 
     models_to_try = [
-        "gemini-2.5-flash",
         "gemini-1.5-flash",
-        "gemini-flash-latest"
+        "gemini-2.0-flash",
+        "gemini-1.5-pro"
     ]
 
     last_error = None
@@ -89,7 +89,7 @@ def chat_completion(prompt: str, system_instruction: str = None) -> str:
             }
 
         try:
-            response = requests.post(url, json=body, timeout=25)
+            response = requests.post(url, json=body, timeout=60)
             if response.status_code == 200:
                 data = response.json()
                 candidates = data.get("candidates", [])
