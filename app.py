@@ -125,7 +125,7 @@ with st.sidebar:
     if GEMINI_API_KEY:
         st.success("⚡ Gemini API Key Active", icon="✅")
     else:
-        st.error("⚠️ GEMINI_API_KEY missing in .env file", icon="🚨")
+        st.error("⚠️ GEMINI_API_KEY missing (add in Secrets or .env)", icon="🚨")
 
     uploaded_file = st.file_uploader(
         "Upload a PDF document",
