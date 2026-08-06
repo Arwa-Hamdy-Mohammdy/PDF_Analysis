@@ -13,8 +13,7 @@ def get_embedding(text: str) -> list[float]:
         raise ValueError("GEMINI_API_KEY is missing. Please set it in Secrets or .env file.")
 
     models_to_try = [
-        "gemini-embedding-2",
-        "text-embedding-004"
+        "gemini-embedding-2"
     ]
 
     last_error = None
@@ -30,6 +29,8 @@ def get_embedding(text: str) -> list[float]:
             if response.status_code == 200:
                 data = response.json()
                 return data["embedding"]["values"]
+            elif response.status_code == 429:
+                last_error = "Embedding API rate limit reached (HTTP 429). Please retry in a few seconds."
             else:
                 last_error = f"HTTP {response.status_code}: {response.text}"
         except Exception as e:
@@ -66,8 +67,7 @@ def chat_completion(prompt: str, system_instruction: str = None) -> str:
         raise ValueError("GEMINI_API_KEY is missing. Please set it in Secrets or .env file.")
 
     models_to_try = [
-        "gemini-flash-latest",
-        "gemini-2.0-flash"
+        "gemini-flash-latest"
     ]
 
     last_error = None
@@ -96,7 +96,10 @@ def chat_completion(prompt: str, system_instruction: str = None) -> str:
                     parts = candidates[0]["content"].get("parts", [])
                     if parts:
                         return parts[0].get("text", "")
-            last_error = f"HTTP {response.status_code}: {response.text}"
+            elif response.status_code == 429:
+                last_error = "Rate limit reached (HTTP 429). Please wait 15 seconds before asking another question."
+            else:
+                last_error = f"HTTP {response.status_code}: {response.text}"
         except Exception as e:
             last_error = str(e)
 
